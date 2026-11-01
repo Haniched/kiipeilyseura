@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Result</title>
+</head>
+
+<body>
+  <p>Choose option {{ option }}</p>
+  <p>
+    Special extras:
+    <ul>
+      {% for type in types %}
+      <li>{{ type }}</li>
+      {% endfor %}
+    </ul>
+  </p>
+  <p>
+    Special requests: <br />
+    {{ message }}
+  </p>
+</body>
+
+</html>
