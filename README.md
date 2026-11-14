@@ -8,3 +8,4 @@
 - Sovelluksessa on käyttäjäsivut, jotka näyttävät tilastoja ja käyttäjän lisäämät ilmoitukset.
 - Käyttäjä pystyy valitsemaan ilmoitukselle yhden tai useamman luokittelun (esim. ilmoituksen osasto, tavaran kunto, maksutapa).
 - Käyttäjä pystyy huutamaan myytävänä olevia tuotteita.
+
