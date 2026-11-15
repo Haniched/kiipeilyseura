@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Viestin muokkaus</title>
+</head>
+
+<body>
+  <form action="/edit/{{ message.id }}" method="post">
+    <p>
+      Viesti:<br />
+      <textarea name="content" rows="5" cols="40">{{ message.content }}</textarea>
+    </p>
+    <p>
+      Kiipeilylaji:<br />
+      <label><input type="radio" name="climbing_type" value="Bouldering" {% if message.climbing_type == "Bouldering" %}checked{% endif %} required /> Bouldering</label>
+      <label><input type="radio" name="climbing_type" value="Lead" {% if message.climbing_type == "Lead" %}checked{% endif %} /> Lead</label>
+      <label><input type="radio" name="climbing_type" value="Top Rope" {% if message.climbing_type == "Top Rope" %}checked{% endif %} /> Top Rope</label>
+      <label><input type="radio" name="climbing_type" value="Speed" {% if message.climbing_type == "Speed" %}checked{% endif %} /> Speed</label>
+    </p>
+    <input type="submit" value="Lähetä" />
+  </form>
+</body>
+
+</html>

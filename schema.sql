@@ -7,7 +7,8 @@ CREATE TABLE users (
 CREATE TABLE threads (
     id INTEGER PRIMARY KEY,
     title TEXT,
-    user_id INTEGER REFERENCES users
+    user_id INTEGER REFERENCES users,
+    climbing_type TEXT NOT NULL DEFAULT 'Bouldering'
 );
 
 CREATE TABLE messages (
