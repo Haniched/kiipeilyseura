@@ -28,9 +28,9 @@ def get_message(message_id):
     result = db.query(sql, [message_id])
     return result[0] if result else None
 
-def add_thread(title, content, user_id, climbing_type, location):
-    sql = "INSERT INTO threads (title, user_id, climbing_type, location) VALUES (?, ?, ?, ?)"
-    db.execute(sql, [title, user_id, climbing_type, location])
+def add_thread(title, content, user_id, climbing_type):
+    sql = "INSERT INTO threads (title, user_id, climbing_type) VALUES (?, ?, ?)"
+    db.execute(sql, [title, user_id, climbing_type])
     thread_id = db.last_insert_id()
     add_message(content, user_id, thread_id)
     return thread_id

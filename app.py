@@ -23,7 +23,7 @@ def new_thread():
     climbing_type = request.form["climbing_type"]
     user_id = session["user_id"]
 
-    thread_id = forum.add_thread(title, content, user_id, climbing_type, location)
+    thread_id = forum.add_thread(title, content, user_id, climbing_type)
     return redirect("/thread/" + str(thread_id))
 
 @app.route("/thread/<int:thread_id>")
@@ -83,16 +83,16 @@ def create():
     password1 = request.form["password1"]
     password2 = request.form["password2"]
     if password1 != password2:
-        return "VIRHE: salasanat eivät ole samat"
+        return "VIRHE: salasanat eivät ole samat <br><a href='/'>Takaisin etusivulle</a>"
     password_hash = generate_password_hash(password1)
 
     try:
         sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
         db.execute(sql, [username, password_hash])
     except sqlite3.IntegrityError:
-        return "VIRHE: tunnus on jo varattu"
+        return "VIRHE: tunnus on jo varattu <br><a href='/'>Takaisin etusivulle</a>"
 
-    return "Tunnus luotu", redirect("/")
+    return "Tunnus luotu <br><a href='/'>Takaisin etusivulle</a>"   
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
