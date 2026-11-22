@@ -1,5 +1,4 @@
 from urllib import request
-
 import db
 
 def get_threads():
@@ -12,7 +11,8 @@ def get_threads():
 
 def get_thread(thread_id):
     sql = "SELECT id, title, climbing_type FROM threads WHERE id = ?"
-    return db.query(sql, [thread_id])[0]
+    result = db.query(sql, [thread_id])
+    return result[0] if result else None
 
 def get_messages(thread_id):
     sql = """SELECT m.id, m.content, m.sent_at, m.user_id, u.username
@@ -22,7 +22,7 @@ def get_messages(thread_id):
     return db.query(sql, [thread_id])
 
 def get_message(message_id):
-    sql = """SELECT m.id, m.content, m.thread_id, t.climbing_type
+    sql = """SELECT m.id, m.content, m.user_id, m.thread_id, t.climbing_type
              FROM messages m, threads t
              WHERE m.thread_id = t.id AND m.id = ?"""
     result = db.query(sql, [message_id])
@@ -59,3 +59,18 @@ def update_thread_type(thread_id, climbing_type):
 def remove_message(message_id):
     sql = "DELETE FROM messages WHERE id = ?"
     db.execute(sql, [message_id])
+
+def search(query):
+    sql = """SELECT m.id message_id,
+                    m.thread_id,
+                    t.title thread_title,
+                    m.sent_at,
+                    u.username
+             FROM threads t, messages m, users u
+             WHERE t.id = m.thread_id AND
+                   u.id = m.user_id AND
+                   m.content LIKE ? OR t.title LIKE ?
+             GROUP BY t.id
+             ORDER BY m.sent_at DESC"""
+    like = "%" + query + "%"
+    return db.query(sql, [like, like])

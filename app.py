@@ -1,25 +1,32 @@
 # flask run
 import sqlite3
-from flask import Flask
-from flask import redirect, render_template, request, session
+from flask import Flask, abort, redirect, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
-import forum
+import forum, users
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
 db.ensure_schema()
+
+def require_login():
+    if "user_id" not in session:
+        abort(403)
 
 @app.route("/")
 def index():
     threads = forum.get_threads()
     return render_template("index.html", threads=threads)
 
+# Thread routes
+
 @app.route("/new_thread", methods=["POST"])
 def new_thread():
     title = request.form["title"]
     content = request.form["content"]
+    if not title or len(title) > 100 or len(content) > 5000:
+        abort(403)
     climbing_type = request.form["climbing_type"]
     user_id = session["user_id"]
 
@@ -29,24 +36,38 @@ def new_thread():
 @app.route("/thread/<int:thread_id>")
 def show_thread(thread_id):
     thread = forum.get_thread(thread_id)
+    if not thread:
+        abort(404)
     messages = forum.get_messages(thread_id)
     return render_template("thread.html", thread=thread, messages=messages)
 
+# Message routes
 @app.route("/new_message", methods=["POST"])
 def new_message():
+    require_login()
+
     if "user_id" not in session:
         return redirect("/login")
 
     content = request.form["content"]
     thread_id = request.form["thread_id"]
     user_id = session["user_id"]
+    
+    try:
+        forum.add_message(content, user_id, thread_id)
+    except sqlite3.IntegrityError:
+        abort(403)
 
-    forum.add_message(content, user_id, thread_id)
     return redirect("/thread/" + str(thread_id))
 
 @app.route("/edit/<int:message_id>", methods=["GET", "POST"])
 def edit_message(message_id):
     message = forum.get_message(message_id)
+    print(message.keys())
+    if not message:
+        abort(404)
+    if "user_id" not in session or message["user_id"] != session["user_id"]:
+        abort(403)  
     if message is None:
         return "Viestiä ei löytynyt", 404
 
@@ -62,7 +83,7 @@ def edit_message(message_id):
 
 @app.route("/remove/<int:message_id>", methods=["GET", "POST"])
 def remove_message(message_id):
-    message = forum.get_messages(message_id)
+    message = forum.get_message(message_id)
 
     if request.method == "GET":
         return render_template("remove.html", message=message)
@@ -73,6 +94,7 @@ def remove_message(message_id):
         return redirect("/thread/" + str(message["thread_id"]))
 
 
+# User authentication routes
 @app.route("/register")
 def register():
     return render_template("register.html")
@@ -121,3 +143,20 @@ def login():
 def logout():
     session.clear()
     return redirect("/")
+
+# Search route
+@app.route("/search")
+def search():
+    query = request.args.get("query")
+    results = forum.search(query) if query else []
+    return render_template("search.html", query=query, results=results)
+
+# User profile route
+@app.route("/user/<int:user_id>")
+def show_user(user_id):
+    user = users.get_user(user_id)
+    if not user:
+        abort(404)
+    messages = users.get_messages(user_id)
+    return render_template("user.html", user=user, messages=messages)
+

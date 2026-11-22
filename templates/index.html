@@ -8,6 +8,8 @@
 <body>
   <h1>Kiipeilyseura</h1>
 
+  <!--User authentication links-->
+
   <p>
     <a href="/register">Luo tunnus</a> |
     {% if session.user_id %}
@@ -17,6 +19,22 @@
     <a href="/login">Kirjaudu sisään</a>
     {% endif %}
   </p>
+
+  <!--Thread search form -->
+
+  <form action="/search" method="get">
+    <p>
+      Hakusana:
+      {% if query %}
+      <input type="text" name="query" value="{{ query }}" />
+      {% else %}
+      <input type="text" name="query" />
+      {% endif %}
+    </p>
+    <input type="submit" value="Hae" />
+  </form>
+
+  <!--List of threads-->
 
   <hr />
   {% for thread in threads %}
@@ -29,13 +47,15 @@
   <hr />
   {% endfor %}
 
+ <!--New thread form -->
+
   {% if session.user_id %}
   <h2>New Post</h2>
 
   <form action="/new_thread" method="post">
     <p>
       Otsikko:<br />
-      <input type="text" name="title" />
+      <input type="text" name="title" maxlength="100" required/>
     </p>
     <p>
       Kiipeilylaji:<br />
@@ -46,13 +66,12 @@
     </p>
     <p>
       Tiedot:<br />
-      <textarea name="content" rows="5" cols="40"></textarea>
+      <textarea name="content" rows="5" cols="40" maxlength="5000"></textarea>
     </p>
     <input type="submit" value="Lähetä" />
   </form>
   {% endif %}
 
-  
 </body>
 
 </html>
