@@ -5,14 +5,20 @@
   <title>Viestin lähetys</title>
 </head>
 
-<body>  
-   <form action="/remove/{{ message['id'] }}" method="post">
-    <p>
-      Haluatko varmasti poistaa viestin?
-    </p>
+<body>
+  {% if thread %}
+  <form action="/remove_thread/{{ thread.id }}" method="post">
+    <p>Haluatko varmasti poistaa ketjun?</p>
     <input type="submit" name="continue" value="Jatka" />
     <input type="submit" name="cancel" value="Peruuta" />
   </form>
-</body>
 
+  {% elif message %}
+  <form action="/remove_message/{{ message.id }}" method="post">
+    <p>Haluatko varmasti poistaa viestin?</p>
+    <input type="submit" name="continue" value="Jatka" />
+    <input type="submit" name="cancel" value="Peruuta" />
+  </form>
+  {% endif %}
+</body>
 </html>

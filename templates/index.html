@@ -13,7 +13,7 @@
   <p>
     <a href="/register">Luo tunnus</a> |
     {% if session.user_id %}
-    Hei, {{ session.username }}! 
+    Hei, <a href="/user/{{ session.user_id }}">{{ session.username }}</a>! 
     <a href="/logout">Kirjaudu ulos</a>
     {% else %}
     <a href="/login">Kirjaudu sisään</a>
@@ -55,7 +55,7 @@
   <form action="/new_thread" method="post">
     <p>
       Otsikko:<br />
-      <input type="text" name="title" maxlength="100" required/>
+      <input type="text" name="title" maxlength="20" required/>
     </p>
     <p>
       Kiipeilylaji:<br />

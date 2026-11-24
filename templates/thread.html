@@ -6,28 +6,46 @@
 </head>
 
 <body>
-  <h1>{{ thread.title }}</h1>
+  <h1><a href="/">Kiipeilyseura</a></h1>
+  <h2>{{ thread.title }}</h2>
   <p>Kiipeilylaji: {{ thread.climbing_type }}</p>
 
-  {% for message in messages %}
+<!--Thread post-->
+  <div class="thread-post">
   <p>
-    <a href="/user/{{ message.user_id }}">
-      {{ message.username }}
-    </a> ({{ message.sent_at }}):
+    <a href="/user/{{ thread.user_id }}">{{ thread.username }}</a>
+    ({{ thread.sent_at }})
   </p>
+  <p>{{ thread.content }}</p>
+  {% if thread.user_id == session.user_id %}
   <p>
-    {{ message.content }}
-  </p>
-  {% if message.user_id == session.user_id %}
-  <p>
-    <a href="/edit/{{ message.id }}">Muokkaa</a> |
-    <a href="/remove/{{ message.id }}">Poista</a>
+    <a href="/edit_thread/{{ thread.id }}">Muokkaa</a> |
+    <a href="/remove_thread/{{ thread.id }}">Poista</a>
   </p>
   {% endif %}
-  <hr />
-  {% endfor %}
+</div>
+
+<!--Thread comments-->
+
+  {% for message in messages %}
+<div class="message {% if message.user_id == thread.user_id %}by-owner{% endif %}">
+  <p id="{{ message.id }}">
+    <a href="/user/{{ message.user_id }}">{{ message.username }}</a>
+    {% if message.user_id == thread.user_id %}(kirjoittaja){% endif %}
+    ({{ message.sent_at }}):
+  </p>
+  <p>{{ message.content }}</p>
+  {% if message.user_id == session.user_id %}
+  <p>
+    <a href="/edit_message/{{ message.id }}">Muokkaa</a> |
+    <a href="/remove_message/{{ message.id }}">Poista</a>
+  </p>
+  {% endif %}
+</div>
+<hr />
+{% endfor %}
   {% if session.user_id %}
-  <h2>Uusi viesti</h2>
+  <h4>Uusi viesti</h4>
 
   <form action="/new_message" method="post">
     <p>
