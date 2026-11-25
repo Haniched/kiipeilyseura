@@ -47,7 +47,6 @@ Sovellus vaatii Pythonin (3.10 tai uudempi) ja Flaskin.
 
    ```
    sqlite3 database.db < schema.sql
-   sqlite3 database.db < init.sql
    ```
 
 5. Käynnistä sovellus:

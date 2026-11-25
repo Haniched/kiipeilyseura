@@ -5,6 +5,15 @@ def get_user(user_id):
     result = db.query(sql, [user_id])
     return result[0] if result else None
 
+def get_threads(user_id):
+    sql = """SELECT t.id,
+                    t.title thread_title,
+                    t.sent_at
+             FROM threads t
+             WHERE t.user_id = ?
+             ORDER BY t.sent_at DESC"""
+    return db.query(sql, [user_id])
+
 def get_messages(user_id):
     sql = """SELECT m.id,
                     m.thread_id,

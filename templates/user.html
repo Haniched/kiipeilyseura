@@ -3,18 +3,37 @@
     <title>Käyttäjän sivu</title>
 </head>
 <body> 
-        <h1>Käyttäjä {{ user.username }}</h1>
+        <h1>Käyttäjä <b>{{ user.username }}</b></h1>
 
+        <p>Käyttäjä on lähettänyt {{ threads | count }} reittejä, {{ messages | count }} kommentia</p>
+
+        {% if threads %}
         <p>
-            Käyttäjä on lähettänyt {{ messages | count }} viestiä
+            Ensimmäinen reitti lähetetty {{ threads[-1].sent_at }}
         </p>
+        <p>
+            Viimeisin reitti lähetetty {{ threads[0].sent_at }}
+        </p>
+        {% endif %}
+        
+        <ul>
+        {% for thread in threads %}
+            <li>
+                <a href="/thread/{{thread.id}}">
+                    {{ thread.thread_title }}
+                </a>
+            <br />
+            ({{ thread.sent_at }})
+            </li>
+        {% endfor %}
+        </ul>
 
         {% if messages %}
         <p>
-            Ensimmäinen viesti lähetetty {{ messages[-1].sent_at }}
+            Ensimmäinen kommenti lähetetty {{ messages[-1].sent_at }}
         </p>
         <p>
-            Viimeisin viesti lähetetty {{ messages[0].sent_at }}
+            Viimeisin kommenti lähetetty {{ messages[0].sent_at }}
         </p>
         {% endif %}
 
